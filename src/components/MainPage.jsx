@@ -40,11 +40,9 @@ const Header = () => {
       sm:w-[80px] sm:h-[90px]
       md:w-[90px] md:h-[100px]
       lg:w-[105px] lg:h-[114px]
-
       absolute
       top-[-8px] sm:top-[-10px] md:top-[-10px] lg:top-[-12px]
       left-[8px] sm:left-[10px] md:left-[12px] lg:left-[14px]
-
       p-[6px] sm:p-[8px] md:p-[8px] lg:p-[10px]" />
           <img src={title} alt="title" className=" w-[180px]
       sm:w-[250px]
@@ -58,14 +56,14 @@ const Header = () => {
       left-[70px] sm:left-[90px] md:left-[100px] lg:left-[109px]" />
         </div>
 
-        <div className="flex sm:flex-row gap-2 sm:gap-3 md:gap-4">
-          <button onClick={() => navigate("/staff-login")} className="h-[40px] sm:h-[34px] md:h-[36px] lg:h-[38px]
+        <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 md:gap-4">
+          <button onClick={() => navigate("/staff-login")} className="h-[32px] sm:h-[34px] md:h-[36px] lg:h-[38px]
       px-3 sm:px-3.5 md:px-4
       text-sm sm:text-sm md:text-base
       rounded-lg bg-teal-700 text-white w-full sm:w-auto">
             Staff Login
           </button>
-          <button onClick={()=>navigate("/student-login")} className="h-[40px] sm:h-[35px] md:h-[36px] lg:h-[38px]
+          <button onClick={()=>navigate("/student-login")} className="h-[32px] sm:h-[35px] md:h-[36px] lg:h-[38px]
       px-3 sm:px-3.5 md:px-4
       text-sm sm:text-sm md:text-base
       rounded-lg bg-teal-700 text-white w-full sm:w-auto">
