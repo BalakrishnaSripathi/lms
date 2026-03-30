@@ -1,64 +1,65 @@
-import React, { useState } from 'react'
+import React from 'react'
 import LoginIcon from '../assets/loginicon.png'
-import { Eye, EyeOff } from "lucide-react";
+import { Axe, Eye, EyeOff } from "lucide-react";
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useState } from 'react';
 import { Link } from "react-router-dom"
 import { loginStudent } from '@/api/student.api';
+import StudentAfterLogin from './StudentAfterLogin';
+
 
 const schema = z.object({
-  username: z.string()
-    .min(1, "User ID is required")
+  username: z.string().min(1, "User ID is required")
     .min(6, "User ID must be at least 6 characters"),
+    // .max(20, "User ID must not exceed 20 characters")
+    // .regex(/^[a-zA-Z0-9_]+$/, "Only letters, numbers, and underscore allowed"),
 
-  password: z.string()
-    .min(1, "Password is required")
+  password: z.string().min(1, "Password is required")
     .min(5, "Password must be at least 5 characters")
     .max(20, "Password must not exceed 20 characters"),
+
 })
 
 const StudentLogin = () => {
   const [showPassword, setShowPassword] = useState(false)
-
-  const { register,handleSubmit,reset,formState: { errors, isValid, isSubmitting }} = useForm({resolver: zodResolver(schema),mode: "onChange"});
+  const { register, handleSubmit, reset, formState: { errors, isValid, isSubmitting } } = useForm({ resolver: zodResolver(schema), mode: "onChange" });
 
   const onSubmit = async (data) => {
     try {
       const payload = {
         username: data.username,
         password: data.password
+
       }
-      const res = await loginStudent(payload)
+      const res=await loginStudent(payload)
       console.log(res.data)
-      alert(`${res.data.message} and your studentId: ${res.data.studentId}`)
-    } 
+      alert("hello")
+      reset();
+    }
     catch (error) {
-      alert(error.response?.data)
       console.log(error.response?.data || error.message)
     }
-      reset();
+
   }
 
   return (
     <div className='flex justify-center items-center min-h-screen px-4'>
 
       <div className='
-        w-[320px] sm:w-[360px] md:w-[380px] lg:w-[400px]
-        h-auto lg:h-[456.33px]
+    w-[320px] sm:w-[360px] md:w-[380px] lg:w-[400px]
+    h-auto lg:h-[456.33px]
 
-        rounded-[10px] sm:rounded-[12px] lg:rounded-[14px]
-        border-[2px] lg:border-[2.67px] border-[#00BBA7]
+    rounded-[10px] sm:rounded-[12px] lg:rounded-[14px]
+    border-[2px] lg:border-[2.67px] border-[#00BBA7]
 
-        pt-[20px] sm:pt-[28px] md:pt-[30px] lg:pt-[34.67px]
-        px-[20px] sm:px-[28px] md:px-[30px] lg:px-[34.67px]
-        pb-[20px] lg:pb-[2.67px]
+    pt-[20px] sm:pt-[28px] md:pt-[30px] lg:pt-[34.67px]
+    px-[20px] sm:px-[28px] md:px-[30px] lg:px-[34.67px]
 
-        flex flex-col items-center
-        gap-4 sm:gap-5 md:gap-5 lg:gap-6
-
-        box-border
-      '>
+    flex flex-col items-center
+    gap-4 sm:gap-5 md:gap-5 lg:gap-6
+  '>
 
         {/* Profile */}
         <img
@@ -72,13 +73,10 @@ const StudentLogin = () => {
           Student Login
         </h2>
 
-        <form
-          onSubmit={handleSubmit(onSubmit)}
-          className='w-full flex flex-col items-center'
-        >
+        <form onSubmit={handleSubmit(onSubmit)} className='w-full flex flex-col items-center'>
 
           {/* User ID */}
-          <div className='w-full lg:w-[330.67px] flex flex-col gap-1'>
+          <div className='w-full lg:w-[330.67px] flex flex-col gap-2'>
             <label htmlFor="username" className='text-sm'>
               User ID / Mobile Number
             </label>
@@ -91,14 +89,15 @@ const StudentLogin = () => {
               className='w-full h-[38px] sm:h-[40px] rounded-[8px] bg-gray-200 px-3 outline-none'
             />
 
-            {/* Fixed height for error */}
-            <p className='text-red-500 text-sm h-[18px]'>
-              {errors.username?.message}
-            </p>
+            {errors.username && (
+              <p className='text-red-500 text-sm'>
+                {errors.username.message}
+              </p>
+            )}
           </div>
 
           {/* Password */}
-          <div className='w-full lg:w-[330.67px] flex flex-col gap-1'>
+          <div className='w-full lg:w-[330.67px] flex flex-col gap-2 mt-2'>
             <label htmlFor="password" className='text-sm'>
               Password
             </label>
@@ -120,10 +119,11 @@ const StudentLogin = () => {
               </span>
             </div>
 
-            {/* Fixed height for error */}
-            <p className='text-red-500 text-sm h-[18px]'>
-              {errors.password?.message}
-            </p>
+            {errors.password && (
+              <p className='text-red-500 text-sm'>
+                {errors.password.message}
+              </p>
+            )}
           </div>
 
           {/* Button */}
@@ -131,18 +131,18 @@ const StudentLogin = () => {
             type="submit"
             disabled={!isValid || isSubmitting}
             className={`
-              w-full lg:w-[330.67px]
-              h-[34px] sm:h-[36px]
-              rounded-[8px] text-white transition mt-[10px]
-              ${!isValid ? "bg-gray-500 cursor-not-allowed" : "bg-[#030213] hover:opacity-90"}
-            `}
+          w-full lg:w-[330.67px]
+          h-[34px] sm:h-[36px]
+          rounded-[8px] text-white transition mt-[14px] sm:mt-[16px]
+          ${!isValid ? "bg-gray-500 cursor-not-allowed" : "bg-[#030213] hover:opacity-90"}
+        `}
           >
             {isSubmitting ? "Logging in..." : "Login"}
           </button>
         </form>
 
         {/* Links */}
-        <p className='text-gray-400 text-sm text-center'>
+        <p className='text-gray-400 text-sm text-center mt-[1px] sm:mt-[16px]'>
           <Link to="/register" className="underline">Register</Link>{" "}
           |{" "}
           <Link to="/forgot-password" className="underline">Forgot Password?</Link>
