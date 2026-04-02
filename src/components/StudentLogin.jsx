@@ -4,7 +4,7 @@ import { Eye, EyeOff } from "lucide-react";
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 import { loginStudent } from '@/api/student.api';
 
 const schema = z.object({
@@ -22,7 +22,7 @@ const StudentLogin = () => {
   const [showPassword, setShowPassword] = useState(false)
 
   const { register,handleSubmit,reset,formState: { errors, isValid, isSubmitting }} = useForm({resolver: zodResolver(schema),mode: "onChange"});
-
+   const navigate = useNavigate();
   const onSubmit = async (data) => {
     try {
       const payload = {
@@ -31,6 +31,9 @@ const StudentLogin = () => {
       }
       const res = await loginStudent(payload)
       console.log(res.data)
+      if (res.data.message==="OTP sent to your registered email"){
+            navigate("/verify-otp");
+         }
       alert(`${res.data.message} and your studentId: ${res.data.studentId}`)
     } 
     catch (error) {
@@ -143,7 +146,7 @@ const StudentLogin = () => {
 
         {/* Links */}
         <p className='text-gray-400 text-sm text-center'>
-          <Link to="/register" className="underline">Register</Link>{" "}
+          <Link to="/student-register" className="underline">Register</Link>{" "}
           |{" "}
           <Link to="/forgot-password" className="underline">Forgot Password?</Link>
         </p>

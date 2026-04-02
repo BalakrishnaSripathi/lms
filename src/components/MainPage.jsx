@@ -13,6 +13,7 @@ import angular from "../assets/angular.png";
 import iot from "../assets/iot.png";
 import title from "../assets/title.png"
 import { useNavigate } from "react-router-dom";
+import AddNewCourse from "./AddNewCourse";
 
 const Header = () => {
     const navigate = useNavigate();
