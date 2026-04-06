@@ -22,15 +22,7 @@ const schema = z.object({
 
 const StaffLogin = () => {
   const [showPassword, setShowPassword] = useState(false)
-  const {
-    register,
-    handleSubmit,
-    reset,
-    formState: { errors, isValid, isSubmitting }
-  } = useForm({
-    resolver: zodResolver(schema),
-    mode: "onChange"
-  });
+  const {register,handleSubmit,reset,formState: { errors, isValid, isSubmitting }} = useForm({resolver: zodResolver(schema),mode: "onChange"});
 
   const onSubmit = async (data) => {
     try {
