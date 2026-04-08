@@ -1,0 +1,2 @@
+npm install -D @hey-api/openapi-ts;
+npm i @hey-api/client-fetch

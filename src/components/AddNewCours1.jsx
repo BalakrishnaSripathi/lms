@@ -34,12 +34,67 @@ const AddNewCours1 = () => {
       courseVideo: null,
     });
 
-  const onSubmit = (data) => {
-  const imageFile = data.courseImage[0];
-  const videoFile = data.courseVideo[0];
+  const toBase64 = (file) =>
+  new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = (error) => reject(error);
+  });
 
-  console.log({ ...data, imageFile, videoFile });
+
+  const onSubmit = async (data) => {
+  try {
+    const imageFile = data.courseImage?.[0];
+    const videoFile = data.courseVideo?.[0];
+
+    // convert files → base64 strings
+    const imageBase64 = await toBase64(imageFile);
+    const videoBase64 = await toBase64(videoFile);
+
+    const payload = {
+      courseTitle: data.coursetitle,
+      description: data.description,
+      language: data.language,
+
+      skills: data.skills.split(",").map((s) => s.trim()),
+
+      subjectId: Number(data.subject),
+      providerId: Number(data.provider),
+
+      level: data.level.toUpperCase(),
+
+      courseImage: imageBase64,   // ✅ string
+      introVideo: videoFile.name,    // ✅ string
+    };
+    console.log(payload)
+
+    const response = await fetch("http://localhost:9090/api/course/create?staffId=2", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+    });
+
+    const result = await response.json();
+
+    if (!response.ok) {
+      throw new Error(result.message || "Failed");
+    }
+
+    console.log("Success:", result);
+    alert("Course created ✅");
+
+  } catch (error) {
+    console.error(error);
+    alert(error.message);
+  }
 };
+
+  
+ //console.log({ ...data, imageFile, videoFile });
+
 
   return (
     <div className="flex justify-center">
@@ -70,7 +125,7 @@ const AddNewCours1 = () => {
                 {...register('courseId')}
                 id="courseId"
                 type="text"
-                placeholder="e.g.,CS101"
+                placeholder="   e.g.,CS101"
                 required
               />
                <p className="text-red-500 text-sm h-[18px]">{errors.courseId?.message}</p>
@@ -78,12 +133,12 @@ const AddNewCours1 = () => {
           
 
           <div className="grid gap-2">
-              <label className="h-[14px]" htmlFor="courseId">Course Title *</label>
+              <label className="h-[14px]" htmlFor="coursetitle">Course Title *</label>
               <input className="w-full h-[36px] rounded-[8px] border-[0.67px] bg-[#F3F3F5]"
                 {...register('coursetitle')}
                 id="coursetitle"
                 type="text"
-                placeholder="e.g., Introduction to Computer Science"
+                placeholder="   e.g., Introduction to Computer Science"
                 required
               /> <p className="text-red-500 text-sm h-[18px]">{errors.coursetitle?.message}</p>
           </div>
@@ -91,12 +146,12 @@ const AddNewCours1 = () => {
 
 
           <div className="grid gap-2">
-              <label className="h-[14px]" htmlFor="courseId">Description *</label>
+              <label className="h-[14px]" htmlFor="description">Description *</label>
               <textarea className="w-full h-[64px] rounded-[8px] border-[0.67px] bg-[#F3F3F5]"
                 {...register('description')}
                 id="description"
                 type="text"
-                placeholder="Provide a detailed description of the course..."
+                placeholder="   Provide a detailed description of the course..."
                 required
               /> <p className='text-red-500 text-sm h-[18px]'>{errors.description?.message}</p>
           </div>
@@ -105,24 +160,22 @@ const AddNewCours1 = () => {
               {/*Language And Skills */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="grid gap-2">
-              <label className="h-[14px]" htmlFor="courseId">Language *</label>
-              <input className="w-full h-[36px] rounded-[8px] border-[0.67px] bg-[#F3F3F5]"
-                {...register('language')}
-                id="language"
-                type="text"
-                placeholder="e.g., Introduction to Computer Science"
-                required
-              />
+              <label className="h-[14px]" htmlFor="language">Language *</label>
+               <select {...register("language")} className="w-full h-[36px] rounded-[8px] border-[0.67px] bg-[#F3F3F5]" name="language" id="language">
+                <option value="">Select language</option>
+                <option value="aa">Remo1</option>
+                <option value="bb">Remo2</option>
+              </select>
                <p className="text-red-500 text-sm h-[18px]">{errors.language?.message}</p>
           </div>
           
           <div className="grid gap-2">
-              <label className="h-[14px]" htmlFor="courseId">Skills *</label>
+              <label className="h-[14px]" htmlFor="skills">Skills *</label>
               <input className="w-full h-[36px] rounded-[8px] border-[0.67px] bg-[#F3F3F5]"
                 {...register('skills')}
                 id="skills"
                 type="text"
-                placeholder="e.g., Introduction to Computer Science"
+                placeholder="   e.g., Introduction to Computer Science"
                 required
               />
                <p className="text-red-500 text-sm h-[18px]">{errors.skills?.message}</p>
@@ -131,29 +184,30 @@ const AddNewCours1 = () => {
           {/* Subject , Provider And Level */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div className="grid gap-2">
-              <label className="h-[14px]" htmlFor="courseId">Subject *</label>
+              <label className="h-[14px]" htmlFor="subject">Subject *</label>
               <select {...register("subject")} className="w-full h-[36px] rounded-[8px] border-[0.67px] bg-[#F3F3F5]" name="subject" id="subject">
                 <option value="">Select Subject</option>
-                <option value="Java">Java</option>
-                <option value="Python">Python</option>
+                <option value="1">Java</option>
+                <option value="2">Python</option>
               </select>
               </div>
 
               <div className="grid gap-2">
-              <label className="h-[14px]" htmlFor="courseId">Provider *</label>
+              <label className="h-[14px]" htmlFor="provider">Provider *</label>
               <select {...register("provider")} className="w-full h-[36px] rounded-[8px] border-[0.67px] bg-[#F3F3F5]" name="provider" id="provider">
                 <option value="">Select provider</option>
-                <option value="Remo1">Remo1</option>
-                <option value="Remo2">Remo2</option>
+                <option value="1">Remo1</option>
+                <option value="2">Remo2</option>
               </select>
               </div>
 
               <div className="grid gap-2">
-              <label className="h-[14px]" htmlFor="courseId">Level *</label>
+              <label className="h-[14px]" htmlFor="level">Level *</label>
               <select {...register("level")} className="w-full h-[36px] rounded-[8px] border-[0.67px] bg-[#F3F3F5]" name="level" id="level">
                 <option value="" className="text-[#717182]">Select Level</option>
-                <option value="Level1">Level 1</option>
-                <option value="Level2">Level 2</option>
+                <option value="BEGINNER">Beginner</option>
+                <option value="INTERMEDIATE">Intermediate</option>
+                <option value="ADVANCED">Advanced</option>
               </select>
               </div>
 
@@ -161,7 +215,7 @@ const AddNewCours1 = () => {
             {/* Course IMAGE and course Intro Video */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="grid gap-2">
-              <label className="h-[14px]" htmlFor="courseId">Course Image *</label>
+              <label className="h-[14px]" htmlFor="courseImage">Course Image *</label>
               <div className="relative border-2 border-dashed border-gray-200 rounded-xl p-4 hover:border-blue-400 transition-colors">
                 <input 
                   type="file" 
@@ -183,7 +237,7 @@ const AddNewCours1 = () => {
             
             
               <div className="grid gap-2">
-              <label className="h-[14px]" htmlFor="courseId">Course Intro Video *</label>
+              <label className="h-[14px]" htmlFor="courseVideo">Course Intro Video *</label>
               <div className="relative border-2 border-dashed border-gray-200 rounded-xl p-4 hover:border-blue-400 transition-colors">
                 <input 
                   type="file" 
@@ -206,7 +260,7 @@ const AddNewCours1 = () => {
           </div>{/*main Div */}
              <div className="flex justify-start gap-[8px] mt-4">
             <Button variant="outline"  type="button" onClick={()=>reset()} className="h-[36px] pt-[8px] pb-[8px] ps-[32px] pe-[32px] hover:text-white hover:bg-black active:scale-95">Cancel</Button>
-            <Button variant="outline" type="submit"   disabled={!isValid || isSubmitting} className="h-[36px] pt-[8px] pb-[8px] ps-[32px] pe-[32px] hover:text-white hover:bg-black active:scale-95"> {isSubmitting ? "Adding..." : "Add Course"}</Button>
+            <Button variant="outline" type="submit"  className="h-[36px] pt-[8px] pb-[8px] ps-[32px] pe-[32px] hover:text-white hover:bg-black active:scale-95"> {isSubmitting ? "Adding..." : "Add Course"}</Button>
           </div>
         </form>
       </CardContent>

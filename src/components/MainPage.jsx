@@ -91,6 +91,18 @@ const Header = () => {
     </div>
   ))}
 </div>
+  <button onClick={()=>navigate("/addCourse")} className="h-[32px] sm:h-[35px] md:h-[36px] lg:h-[38px]
+      px-3 sm:px-3.5 md:px-4
+      text-sm sm:text-sm md:text-base 
+      rounded-lg bg-blue-700 text-white w-full sm:w-auto">
+            Add New Course
+          </button>
+          <button onClick={()=>navigate("/student-register")} className="ms-6 h-[32px] sm:h-[35px] md:h-[36px] lg:h-[38px]
+      px-3 sm:px-3.5 md:px-4
+      text-sm sm:text-sm md:text-base
+      rounded-lg bg-blue-700 text-white w-full sm:w-auto">
+            Student Register
+          </button>
     </div>
   );
 };

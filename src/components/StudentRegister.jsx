@@ -52,19 +52,43 @@ const StudentRegister = () => {
   const onSubmit = async (data) => {
     try {
       const formData = new FormData();
+
       Object.keys(data).forEach((key) => {
         if (key === "profile_img") {
-          formData.append(key, data[key][0]);
-        } else {
+  
+          if (data[key][0]) {
+            formData.append(key, data[key][0]);
+          }
+        } else if (data[key] !== undefined) {
           formData.append(key, data[key]);
         }
       });
-      console.log("Payload:", Object.fromEntries(formData));
-      alert("Registered Successfully!");
+
+      // 2. Make the API Call
+      const response = await fetch("http://localhost:9090/api/student/register", {
+        method: "POST",
+        // Note: No headers needed for FormData, browser handles it
+        body: formData,
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        // Handle backend validation errors or server issues
+        throw new Error(result.message || "Registration failed");
+      }
+
+      // 3. Success Feedback
+      console.log("Success:", result);
+      alert("Registration Successful! 🎉");
+      
+      // Reset form and UI
       reset();
       setPreview(null);
+      
     } catch (error) {
-      console.error(error);
+      console.error("Registration Error:", error);
+      alert(error.message || "Something went wrong. Please try again.");
     }
   };
 
