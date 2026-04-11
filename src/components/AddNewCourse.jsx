@@ -206,7 +206,7 @@ const AddNewCourse = () => {
                 <label className="text-[15px] font-medium text-gray-900">Provider *</label>
                 <select 
                   {...register("provider")} 
-                  className="w-full h-[46px] px-4 rounded-[8px] bg-[#F5F5F7] border-none focus:ring-2 focus:ring-blue-500/20 outline-none text-gray-600 appearance-none cursor-pointer bg-[url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%24%2024%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Cpath%20d%3D%22M6%209L12%2015L18%209%22%20stroke%3D%22%239CA3AF%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%2F%3E%3C%2Fsvg%3E')] bg-[length:20px] bg-[position:calc(100%-12px)_center] bg-no-repeat"
+                  className="w-full h-[46px] px-4 rounded-[8px] bg-[#F5F5F7] border-none focus:ring-2 focus:ring-blue-500/20 outline-none text-gray-600 appearance-none cursor-pointer bg-[url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%24%2024%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Cpath%20d%3D%22M6%209L12%2015L18%209%22%20stroke%3D%22%239CA3AF%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%2F%3E%3C%2Fsvg%3E')] bg-[length:20px] bg-[position:calc(100%-12px)_center] bg-no-repeat"
                 >
                   <option value="" disabled>Select provider</option>
                   <option value="1">Internal</option>

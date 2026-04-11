@@ -89,7 +89,7 @@ const StaffLogin = () => {
               type='text'
               id="userId"
               placeholder='Enter your User ID or Mobile Number'
-              className='w-full h-[38px] sm:h-[40px] rounded-[8px] bg-gray-200 px-3 outline-none'
+              className='w-full h-[38px] sm:h-[40px] rounded-[8px] bg-gray-200 px-3 outline-none focus:ring-2 focus:ring-blue-500/20 transition-all'
             />
 
             {/* Fixed height like StudentLogin */}
@@ -110,7 +110,7 @@ const StaffLogin = () => {
                 {...register('password')}
                 id="password"
                 placeholder='Enter your password'
-                className='w-full h-[38px] sm:h-[40px] rounded-[8px] bg-gray-200 px-3 pr-10 outline-none'
+                className='w-full h-[38px] sm:h-[40px] rounded-[8px] bg-gray-200 px-3 pr-10 outline-none focus:ring-2 focus:ring-blue-500/20 transition-all'
               />
 
               <span
