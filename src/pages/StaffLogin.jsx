@@ -11,17 +11,15 @@ const StaffLogin = () => {
     setIsSubmitting(true);
     try {
       const payload = {
-        username: data.identifier, // mapped from unified schema
+        username: data.identifier, 
         password: data.password,
       };
       
       const res = await loginStaff(payload);
-      
-      // TODO: Replace with toast.success()
+           
       alert(`${res.data.message} and your studentId: ${res.data.studentId}`);
     } catch (error) {
       const errorMessage = error.response?.data?.message || error.response?.data || error.message;
-      // TODO: Replace with toast.error()
       alert(errorMessage);
     } finally {
       setIsSubmitting(false);

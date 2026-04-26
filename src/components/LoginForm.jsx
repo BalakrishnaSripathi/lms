@@ -5,7 +5,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { Link } from 'react-router-dom';
 
-// 1. Unified Validation Schema
+
 const loginSchema = z.object({
   identifier: z.string()
     .min(1, "User ID / Mobile Number is required")
@@ -19,14 +19,7 @@ const loginSchema = z.object({
 const LoginForm = ({ title, iconSrc, onSubmit, isSubmitting, bottomLinks }) => {
   const [showPassword, setShowPassword] = useState(false);
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors, isValid },
-  } = useForm({
-    resolver: zodResolver(loginSchema),
-    mode: "onChange",
-  });
+  const { register, handleSubmit,formState: { errors, isValid },} = useForm({ resolver: zodResolver(loginSchema),mode: "onChange",});
 
   return (
     <div className="flex justify-center items-center min-h-screen px-4 bg-gray-50">
@@ -48,7 +41,7 @@ const LoginForm = ({ title, iconSrc, onSubmit, isSubmitting, bottomLinks }) => {
           onSubmit={handleSubmit(onSubmit)}
           className="w-full flex flex-col items-center"
         >
-          {/* Identifier Input */}
+          {/* User ID / Mobile Number */}
           <div className="w-full lg:w-[330.67px] flex flex-col gap-1 mb-2">
             <label htmlFor="identifier" className="text-sm font-medium text-gray-700">
               User ID / Mobile Number
@@ -107,7 +100,7 @@ const LoginForm = ({ title, iconSrc, onSubmit, isSubmitting, bottomLinks }) => {
           </button>
         </form>
 
-        {/* Dynamic Footer Links */}
+        {/* Footer Links */}
         <div className="text-gray-500 text-sm text-center mt-2">
           {bottomLinks}
         </div>

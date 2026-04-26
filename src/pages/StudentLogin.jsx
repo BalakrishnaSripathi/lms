@@ -12,22 +12,23 @@ const StudentLogin = () => {
     setIsSubmitting(true);
     try {
       const payload = {
-        username: data.identifier, // mapped from unified schema
+        username: data.identifier, 
         password: data.password,
       };
+      console.log(payload)
       
       const res = await loginStudent(payload);
-      
+      console.log(res)
       if (res.data.message === "OTP sent to your registered email") {
         navigate("/verify-otp");
-        return; // Early return to prevent showing success toast below
+        return; 
       }
       
-      // TODO: Replace with toast.success()
+      
       alert(`${res.data.message} and your studentId: ${res.data.studentId}`);
     } catch (error) {
+      console.log("Error")
       const errorMessage = error.response?.data?.message || error.response?.data || error.message;
-      // TODO: Replace with toast.error()
       alert(errorMessage);
     } finally {
       setIsSubmitting(false);
