@@ -11,12 +11,16 @@ import { ViewCourses } from './components/ViewCourses'
 import StaffLogin from './pages/StaffLogin'
 import StudentLogin from './pages/StudentLogin'
 import AddCourse1 from './components/AddCourse1'
+import CourseBuilder from './pages/CourseBuilder'
+import CourseStructureBuilder from './pages/course-builder/CourseStructureBuilder'
+import { Toaster } from "react-hot-toast";
 
 
 function App() {
 
   return (
     <div>
+ <Toaster position="top-right" />
       <Routes>
          <Route path='/' element={<Header/>}/>
          <Route path='/addCourse' element={<AddCourse1/>}/>
@@ -24,6 +28,7 @@ function App() {
           <Route path='/student-login' element={<StudentLogin/>}/>
           <Route path='/verify-otp' element={<InputOTPForm/>}/>
           <Route path='/student-register' element={<StudentRegister2/>}/>
+          <Route path='/bui' element={<CourseStructureBuilder/>}/>
       </Routes>
     </div>
   )

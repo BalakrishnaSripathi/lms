@@ -11,7 +11,7 @@ const StaffLogin = () => {
     setIsSubmitting(true);
     try {
       const payload = {
-        username: data.identifier, 
+        loginId: data.identifier, 
         password: data.password,
       };
       

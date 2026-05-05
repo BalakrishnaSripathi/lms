@@ -20,6 +20,7 @@ const StudentLogin = () => {
       const res = await loginStudent(payload);
       console.log(res)
       if (res.data.message === "OTP sent to your registered email") {
+        localStorage.setItem('user', JSON.stringify(res.data));
         navigate("/verify-otp");
         return; 
       }
