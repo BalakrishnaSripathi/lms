@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
 import { List, Plus, Save } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -9,12 +10,82 @@ import { createChapter } from "./types";
 import ChapterCard from "./ChapterCard";
 import { courseSchema } from "./validation";
 
+const API = "http://localhost:9090";
+
 const CourseStructureBuilder = () => {
+  const { courseId } = useParams();
+
   const [course, setCourse] = useState({
     name: "",
-    chapters: [createChapter()],
+    chapters: [],
   });
 
+  // ==============================
+  // ✅ LOAD CHAPTERS + TOPICS
+  // ==============================
+  useEffect(() => {
+    fetchChapters();
+  }, [courseId]);
+
+  const fetchChapters = async () => {
+    try {
+      // ✅ GET CHAPTERS BY COURSE
+      const res = await axios.get(
+        `${API}/api/course/${courseId}/chapters`
+      );
+
+      const chaptersData = res.data || [];
+
+      const chaptersWithTopics = await Promise.all(
+        chaptersData.map(async (ch) => {
+          const topicRes = await axios.get(
+            `${API}/api/topics?chapterId=${ch.id}`
+          );
+
+          return {
+            id: crypto.randomUUID(),
+            backendId: ch.id,
+            title: ch.chapterNm,
+            description: ch.chapterDesc,
+            expanded: true,
+            topics:
+              topicRes.data?.map((t) => ({
+                id: crypto.randomUUID(),
+                backendId: t.id,
+                title: t.topicName,
+                description: t.description,
+                duration: t.expectedTimeMin?.toString() || "",
+                expanded: true,
+                activeTab: "documents",
+                documents: t.documents || [],
+                videos: t.videos || [],
+                urls: t.urls || [],
+              })) || [],
+          };
+        })
+      );
+
+      setCourse({
+        name: courseId,
+        chapters:
+          chaptersWithTopics.length > 0
+            ? chaptersWithTopics
+            : [createChapter()],
+      });
+    } catch (e) {
+      console.error(e);
+      toast.error("Failed to load course");
+
+      setCourse({
+        name: "",
+        chapters: [createChapter()],
+      });
+    }
+  };
+
+  // ==============================
+  // STATE UPDATE
+  // ==============================
   const updateChapter = (id, patch) => {
     setCourse((c) => ({
       ...c,
@@ -31,11 +102,14 @@ const CourseStructureBuilder = () => {
     }));
   };
 
+  // ==============================
+  // DELETE
+  // ==============================
   const deleteChapter = async (chapter) => {
     try {
       if (chapter.backendId) {
         await axios.delete(
-          `http://localhost:9090/api/delete/${chapter.backendId}?staffId=SF00001`
+          `${API}/api/delete/${chapter.backendId}?staffId=SF00001`
         );
       }
 
@@ -53,9 +127,7 @@ const CourseStructureBuilder = () => {
   const deleteTopic = async (chapterId, topic) => {
     try {
       if (topic.backendId) {
-        await axios.delete(
-          `http://localhost:9090/api/topics/${topic.backendId}`
-        );
+        await axios.delete(`${API}/api/topics/${topic.backendId}`);
       }
 
       setCourse((c) => ({
@@ -76,10 +148,11 @@ const CourseStructureBuilder = () => {
     }
   };
 
-  // ✅ FIXED SAVE FUNCTION
+  // ==============================
+  // SAVE (CREATE + UPDATE)
+  // ==============================
   const handleSave = async () => {
     try {
-      // ✅ ZOD VALIDATION
       courseSchema.parse(course);
 
       const updatedChapters = [];
@@ -87,26 +160,27 @@ const CourseStructureBuilder = () => {
       for (const chapter of course.chapters) {
         let chapterId = chapter.backendId;
 
-        // ✅ CREATE OR UPDATE CHAPTER
+        // ✅ CREATE CHAPTER
         if (!chapter.backendId) {
           const res = await axios.post(
-            "http://localhost:9090/api/chapter/create?staffId=SF00001",
+            `${API}/api/chapter/create?staffId=SF00001`,
             {
-              courseId: "BD001",
+              courseId: courseId,
               chapterNm: chapter.title,
               chapterDesc: chapter.description,
             }
           );
-          chapterId = res.data?.chapterId || res.data?.id;
+          chapterId = res.data?.id;
         } else {
+          // ✅ UPDATE CHAPTER
           await axios.put(
-  `http://localhost:9090/api/update/${chapter.backendId}?staffId=1`,
-  {
-    courseId: "BD001", // or dynamic if you have
-    chapterNm: chapter.title,
-    chapterDesc: chapter.description,
-  }
-);
+            `${API}/api/update/${chapter.backendId}?staffId=1`,
+            {
+              courseId: courseId,
+              chapterNm: chapter.title,
+              chapterDesc: chapter.description,
+            }
+          );
         }
 
         const updatedTopics = [];
@@ -114,34 +188,25 @@ const CourseStructureBuilder = () => {
         for (const topic of chapter.topics) {
           let topicId = topic.backendId;
 
-          // ✅ CREATE OR UPDATE TOPIC
           if (!topic.backendId) {
-            const res = await axios.post(
-              "http://localhost:9090/api/topics",
-              {
-                chapterId,
-                topicName: topic.title,
-                description: topic.description,
-                expectedTimeMin: parseInt(topic.duration) || 0,
-                staffId: 1,
-                documents: topic.documents || [],
-                videos: topic.videos || [],
-                urls: topic.urls || [],
-              }
-            );
+            // ✅ CREATE TOPIC
+            const res = await axios.post(`${API}/api/topics`, {
+              chapterId,
+              topicName: topic.title,
+              description: topic.description,
+              expectedTimeMin: parseInt(topic.duration) || 0,
+              staffId: 1,
+            });
             topicId = res.data?.id;
           } else {
-            await axios.put(
-              `http://localhost:9090/api/topics/${topic.backendId}`,
-              {
-                topicName: topic.title,
-                description: topic.description,
-                expectedTimeMin: parseInt(topic.duration) || 0,
-                documents: topic.documents || [],
-                videos: topic.videos || [],
-                urls: topic.urls || [],
-              }
-            );
+            // ✅ UPDATE TOPIC
+            await axios.put(`${API}/api/topics/${topic.backendId}`, {
+              chapterId,
+              topicName: topic.title,
+              description: topic.description,
+              expectedTimeMin: parseInt(topic.duration) || 0,
+              staffId: 1,
+            });
           }
 
           updatedTopics.push({
@@ -173,6 +238,9 @@ const CourseStructureBuilder = () => {
     }
   };
 
+  // ==============================
+  // UI
+  // ==============================
   return (
     <div className="mx-auto max-w-4xl rounded-3xl border bg-card p-6 shadow-sm">
       <header className="flex items-start gap-3">
@@ -184,7 +252,7 @@ const CourseStructureBuilder = () => {
           <h1 className="text-2xl font-bold">
             Course Structure Builder
           </h1>
-          <p className="mt-2 text-gray-600 text-base md:text-lg">
+          <p className="mt-2 text-gray-600">
             Design your course curriculum with modules, lessons, and topics
           </p>
         </div>
@@ -200,13 +268,8 @@ const CourseStructureBuilder = () => {
         />
       </section>
 
-      <div className="my-6" />
-
-      <div className="flex justify-between">
-        <h1 className="text-2xl font-bold">Course Chapters</h1>
-      </div>
-
-      <div className="space-y-4 mt-4">
+      {/* ✅ CHAPTERS */}
+      <div className="space-y-4 mt-6">
         {course.chapters.map((chapter, i) => (
           <ChapterCard
             key={chapter.id}
@@ -223,10 +286,12 @@ const CourseStructureBuilder = () => {
         ))}
       </div>
 
+      {/* ✅ FOOTER */}
       <div className="mt-6 flex justify-between">
         <Button onClick={addChapter}>
           <Plus /> Add Chapter
         </Button>
+
         <Button onClick={handleSave}>
           <Save /> Save Course
         </Button>

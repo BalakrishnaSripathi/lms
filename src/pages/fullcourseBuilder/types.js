@@ -8,7 +8,7 @@ export const createTopic = () => ({
   description: "",
   expanded: true,
   activeTab: "documents",
-  documents: [{ id: uid(), title: "" }],
+  documents: [],
   videos: [],
   urls: [],
 });
@@ -18,6 +18,6 @@ export const createChapter = () => ({
   backendId: null,
   title: "",
   description: "",
-  expanded: true,
+  expanded: false,
   topics: [createTopic()],
 });

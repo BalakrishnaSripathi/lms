@@ -6,68 +6,46 @@ import { createTopic } from "./types";
 import TopicCard from "./TopicCard";
 import { cn } from "@/lib/utils";
 
-const ChapterCard = ({ chapter, index, onChange, onDelete }) => {
+const ChapterCard = ({ chapter, index, onChange, onDelete, onDeleteTopic }) => {
   return (
-
-        <div className="rounded-2xl border-2 border-l-4 border-[#9810FA]/40 hover:border-[#9810FA] bg-card p-4 shadow-sm transition-all">
+    <div className="rounded-2xl border-2 border-l-4 border-[#9810FA]/40 hover:border-[#9810FA] bg-card p-4 shadow-sm transition-all">
       
-      {/* HEADER */}
       <div className="flex items-center gap-2">
         <GripVertical className="h-4 w-4" />
 
-        {/* TOGGLE */}
         <button
           onClick={() => onChange({ expanded: !chapter.expanded })}
           className="rounded p-1 text-muted-foreground hover:bg-muted"
         >
-          <ChevronDown
-            className={cn(
-              "h-4 w-4 transition-transform",
-              !chapter.expanded && "-rotate-90"
-            )}
-          />
+          <ChevronDown className={cn("h-4 w-4 transition-transform", !chapter.expanded && "-rotate-90")} />
         </button>
 
         <h2 className="font-semibold text-brand">
           Chapter {index + 1}
         </h2>
 
-        {/* DELETE */}
         <div className="ml-auto">
-          <Button
-            variant="outline"
-            size="icon"
-            className="h-8 w-8"
-            onClick={onDelete}
-          >
+          <Button variant="outline" size="icon" onClick={onDelete}>
             <Trash2 className="h-3.5 w-3.5" />
           </Button>
         </div>
       </div>
 
-      {/* CONTENT */}
       {chapter.expanded && (
         <div className="mt-3 space-y-3">
 
-          {/* ✅ CORRECT PLACE: Chapter inputs */}
           <Input
             placeholder={`Chapter ${index + 1} Title`}
             value={chapter.title}
-            onChange={(e) =>
-              onChange({ title: e.target.value })
-            }
-            
+            onChange={(e) => onChange({ title: e.target.value })}
           />
 
           <Textarea
             placeholder="Chapter description"
             value={chapter.description}
-            onChange={(e) =>
-              onChange({ description: e.target.value })
-            }
+            onChange={(e) => onChange({ description: e.target.value })}
           />
 
-          {/* TOPICS */}
           <div className="space-y-3">
             {chapter.topics.map((topic, i) => (
               <TopicCard
@@ -81,18 +59,12 @@ const ChapterCard = ({ chapter, index, onChange, onDelete }) => {
                     ),
                   })
                 }
-                onDelete={() =>
-                  onChange({
-                    topics: chapter.topics.filter(
-                      (t) => t.id !== topic.id
-                    ),
-                  })
-                }
+                onDelete={() => onDeleteTopic(topic)}
+                //onDeleteTopic={(topic) => deleteTopic(chapter.id, topic)}
               />
             ))}
           </div>
 
-          {/* ADD TOPIC */}
           <Button
             variant="outline"
             onClick={() =>
