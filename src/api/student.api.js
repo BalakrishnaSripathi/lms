@@ -6,7 +6,7 @@ export const registerStudent = (data) =>
 
 // Login
 export const loginStudent = (data) =>
-  axiosInstance.post("/student/login", data);
+  axiosInstance.post("/auth/student/login", data);
 
 // OTP Verify
 export const verifyOtp = (data) =>

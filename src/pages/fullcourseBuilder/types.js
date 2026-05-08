@@ -6,7 +6,7 @@ export const createTopic = () => ({
   title: "",
   duration: "",
   description: "",
-  expanded: true,
+  expanded: false,
   activeTab: "documents",
   documents: [],
   videos: [],
@@ -18,6 +18,6 @@ export const createChapter = () => ({
   backendId: null,
   title: "",
   description: "",
-  expanded: false,
+  expanded: true,
   topics: [createTopic()],
 });
